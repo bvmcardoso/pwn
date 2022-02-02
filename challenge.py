@@ -1,15 +1,12 @@
-import datetime
+import datetime, time
 from num2words import num2words
 
-number = 99999
-
-
-def calculate_time(number:int) -> str:
+def calculate_time(sleep_time: float) -> str:
     """Function to calculate time to perform it's action,
-    which is execute a loop and print results on screen.
+    which is takes a .
 
     Args:
-        number(int) : Number of loop interations to be performed.
+        sleep_time (float) : Time that the function will take to be executed.
 
     Returns:
         string: A string containing the time needed to execute the loop
@@ -17,41 +14,36 @@ def calculate_time(number:int) -> str:
     """
     start_time = datetime.datetime.now()
 
-    result = 0
-
-    for number in range(0, number + 1):
-        print(number)
+    time.sleep(sleep_time)
 
     end_time = datetime.datetime.now()
 
     difference_time_function = end_time - start_time
-
-    print("#" * 60)
-
+    
     return str(difference_time_function)
 
 
-def split_time(time) -> dict:
+def split_time(time: str) -> dict:
     """This function takes the time and create a dictionary from it with the splitted values
 
     Args:
         time(str) : The time that the function took to be performed.
 
     Returns:
-        dictionary: A dictionary containing how many hours, minutes, seconds and milliseconds are 			   inside the time argument.
+        splitted_time(dict): A dictionary containing how many hours, minutes, seconds and milliseconds are 			   inside the time argument.
     """
 
     timer = time.split(":")
     sec = timer[2].split(".")
 
-    time = {
+    splitted_time = {
         "hours": int(timer[0]),
         "minutes": int(timer[1]),
         "seconds": int(sec[0]),
         "milliseconds": int(sec[1]),
     }
 
-    return time
+    return splitted_time
 
 
 def readable_time(splitted_time: dict) -> str:
@@ -107,11 +99,19 @@ def readable_time(splitted_time: dict) -> str:
         descriptive_milliseconds = num2words(rounded_milliseconds)
         readable_time += f"{descriptive_milliseconds} {support}"
 
-    return f"Your function took {readable_time} to run"
+    return (
+        f"Your function took {readable_time} to run ({time_to_run_function})"
+    )
 
 
 if __name__ == "__main__":
-    time_to_run_function = calculate_time(number)
+    sleep_time = 1.5
+    time_to_run_function = calculate_time(sleep_time)
     splitted_time = split_time(time_to_run_function)
     human_time = readable_time(splitted_time)
     print(human_time)
+
+    # time_to_run_function = "2:03:02.511533"
+    # splitted_time = split_time(time_to_run_function)
+    # human_time = readable_time(splitted_time)
+    # print(human_time)
