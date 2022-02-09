@@ -1,7 +1,11 @@
-import datetime, time
+import time
+from datetime import datetime, timedelta
+
 from num2words import num2words
 
-def calculate_time(sleep_time: float) -> str:
+
+# Todo: returns an timedelta:
+def calculate_time(sleep_time: float) -> timedelta:
     """Function to calculate time to perform it's action,
     which is takes a .
 
@@ -12,18 +16,18 @@ def calculate_time(sleep_time: float) -> str:
         string: A string containing the time needed to execute the loop
                 in the format hours:minutes:seconds.milliseconds
     """
-    start_time = datetime.datetime.now()
+    start_time = datetime.now()
 
     time.sleep(sleep_time)
 
-    end_time = datetime.datetime.now()
+    end_time = datetime.now()
 
     difference_time_function = end_time - start_time
-    
-    return str(difference_time_function)
+
+    return difference_time_function
 
 
-def split_time(time: str) -> dict:
+def split_time(time: timedelta) -> dict:
     """This function takes the time and create a dictionary from it with the splitted values
 
     Args:
@@ -33,14 +37,19 @@ def split_time(time: str) -> dict:
         splitted_time(dict): A dictionary containing how many hours, minutes, seconds and milliseconds are 			   inside the time argument.
     """
 
-    timer = time.split(":")
-    sec = timer[2].split(".")
+    seconds = time.seconds
+    hours = seconds // 3600
+    minutes = (seconds // 60) % 60
+    microseconds = time.microseconds
+
+    # timer = time.split(":")
+    # sec = timer[2].split(".")
 
     splitted_time = {
-        "hours": int(timer[0]),
-        "minutes": int(timer[1]),
-        "seconds": int(sec[0]),
-        "milliseconds": int(sec[1]),
+        "hours": hours,
+        "minutes": minutes,
+        "seconds": seconds,
+        "milliseconds": microseconds,
     }
 
     return splitted_time
@@ -77,7 +86,7 @@ def readable_time(splitted_time: dict) -> str:
         else:
             support = "minutes"
         descriptive_minutes = num2words(minutes)
-        readable_time += f"{descriptive_minutes} {support}, "
+        readable_time += f"{descriptive_minutes} {support} and "
 
     if seconds > 0:
         descriptive_seconds = num2words(seconds)
@@ -86,9 +95,9 @@ def readable_time(splitted_time: dict) -> str:
         else:
             support = "seconds"
 
-        readable_time += f"{descriptive_seconds} {support} and "
+        readable_time += f"{descriptive_seconds} {support}"
 
-    if milliseconds > 0:
+    if milliseconds > 0 and minutes < 1:
         milli = str(milliseconds)
         rounded_milliseconds = milli[0:2]
         if int(rounded_milliseconds) == 1:
@@ -97,7 +106,7 @@ def readable_time(splitted_time: dict) -> str:
             support = "milliseconds"
 
         descriptive_milliseconds = num2words(rounded_milliseconds)
-        readable_time += f"{descriptive_milliseconds} {support}"
+        readable_time += f" and {descriptive_milliseconds} {support}"
 
     return (
         f"Your function took {readable_time} to run ({time_to_run_function})"
@@ -110,8 +119,3 @@ if __name__ == "__main__":
     splitted_time = split_time(time_to_run_function)
     human_time = readable_time(splitted_time)
     print(human_time)
-
-    # time_to_run_function = "2:03:02.511533"
-    # splitted_time = split_time(time_to_run_function)
-    # human_time = readable_time(splitted_time)
-    # print(human_time)
